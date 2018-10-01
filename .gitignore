@@ -1,0 +1,18 @@
+*
+
+!*.*
+!/**/
+
+!src/*
+!src/**/*
+
+# Vim backup file
+*.swp
+*.un~
+
+*.exe
+*.html
+*.tar.gz
+*.zip
+
+nimcache/
