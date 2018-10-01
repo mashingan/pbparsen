@@ -93,6 +93,8 @@ converter toConstruct*(x: string): Construct = parseEnum[Construct](x)
 
 proc mapKind(ar: ArityService): string =
   if ar.`type` in gomap: gomap[ar.`type`]
+  elif ar.`type`.endsWith "Timestamp": "time.Time"
+  elif ar.`type`.endsWith "Any": "interface{}"
   else: "*vm." & ar.`type`
 
 proc goRpc*(rpc: RpcProto): string =
@@ -105,6 +107,17 @@ proc goRpc*(rpc: RpcProto): string =
 template normalize*(str: string): string =
   str.replace('.', '_')
 
+proc needtime*(msg: MessageProto): bool =
+  for field in msg.fields.values:
+    if field.kind.endsWith "Timestamp":
+      return true
+
+proc mapKind(field: FieldProto): string =
+  if field.kind in gomap: field.kind.normalize
+  elif field.kind.endsWith "Timestamp": "time.Time"
+  elif field.kind.endsWith "Any": "interface{}"
+  else: field.kind.normalize
+
 proc goProtoField*(field: FieldProto): string =
   let rept = if field.repeated: "[]" else: ""
-  result = fmt"""{field.name.normalize} {rept}{field.kind.normalize}"""
+  result = fmt"""{field.name.normalize} {rept}{field.mapKind}"""
