@@ -2,6 +2,30 @@ import strutils, tables, strformat
 
 import types
 
+const
+  primitiveTypes* = [
+    "int32", "int64", "uint64", "uint32", "string", "sint32", "sint64",
+    "fixed32", "fixed64", "bool", "char", "double", "float", "sfixed32",
+    "sfixed64", "bytes"
+  ]
+  gomap* = [
+    ("double", "float64"),
+    ("float", "float32"),
+    ("int32", "int32"),
+    ("int64", "int64"),
+    ("uint32", "uint32"),
+    ("uint64", "uint64"),
+    ("sint32", "int32"),
+    ("sint64", "int64"),
+    ("fixed32", "uint32"),
+    ("fixed64", "fixed64"),
+    ("sfixed32", "int32"),
+    ("sfixed64", "int64"),
+    ("bool", "bool"),
+    ("string", "string"),
+    ("bytes", "bytes")].toTable
+
+
 proc toSnakeCase*(str: string): string =
   result = "" & str[0].toLowerAscii
   let uppercase = { 'A' .. 'Z' }
@@ -66,3 +90,21 @@ proc `$`*(pb: Proto): string =
 proc isEnd*(x: Expr): bool = x.kind == End
 
 converter toConstruct*(x: string): Construct = parseEnum[Construct](x)
+
+proc mapKind(ar: ArityService): string =
+  if ar.`type` in gomap: gomap[ar.`type`]
+  else: "*vm." & ar.`type`
+
+proc goRpc*(rpc: RpcProto): string =
+  let
+    reqarity = "x " & rpc.request.mapKind
+    resarity = rpc.response.mapKind & ", error"
+
+  result = fmt"""{rpc.name}({$reqarity}) ({$resarity})"""
+
+template normalize*(str: string): string =
+  str.replace('.', '_')
+
+proc goProtoField*(field: FieldProto): string =
+  let rept = if field.repeated: "[]" else: ""
+  result = fmt"""{field.name.normalize} {rept}{field.kind.normalize}"""

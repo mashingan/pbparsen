@@ -6,10 +6,7 @@ import sugar
 import types, utils
 export types, utils
 
-const primitiveTypes = [
-  "int32", "int64", "uint64", "uint32", "string",
-  "fixed32", "fixed64", "bool", "char"
-]
+import goout/[gousecase, goviewmodel]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -171,7 +168,7 @@ proc parseMessage(expr: Expr): seq[MessageProto] =
       discard
 
 
-proc proto(exprs: openarray[Expr]): Proto =
+proc proto(exprs: varargs[Expr]): Proto =
   var services = newTable[string, ServiceProto]()
   var messages = newTable[string, MessageProto]()
   for expr in exprs:
@@ -199,7 +196,7 @@ proc proto(exprs: openarray[Expr]): Proto =
   result.messages = messages
 
 proc proto(pb: var Proto, expr: Expr) =
-  var prot = [expr].proto
+  var prot = expr.proto
   if prot.syntax != "":
     pb.syntax = prot.syntax
   for name, svc in prot.services:
@@ -264,6 +261,9 @@ when isMainModule:
       quit "Please provide protobuf file"
 
     var pb = paramStr(1).parsePb
-    echo pb
+    #echo pb
+    stdout.writeUseCase(getCurrentDir() / "viewmodel", pb)
+    for msg in pb.messages.values:
+      stdout.writeViewModel msg
 
   main()
