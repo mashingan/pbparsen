@@ -250,25 +250,29 @@ proc parsePb*(fname: string): Proto =
   result.normalizeFieldType
 
 when isMainModule:
+  template unixSep(str: string): untyped =
+    str.replace('\\', '/')
+
   proc main =
     if paramCount() < 1:
       quit "Please provide protobuf file"
 
     var pb = paramStr(1).parsePb
     echo pb
+
+    let gopath = "GOPATH".getenv((getHomeDir() / "go").unixSep)
+    let info = GrpcServiceInfo(
+      name: "payment_service",
+      basepath: "paxelit/payment",
+      gopath: gopath)
     echo("===========")
-    stdout.writeUseCase((getCurrentDir() / "viewmodel").replace('\\', '/'),
-      pb)
+    stdout.writeUseCase((gopath / info.basepath / info.name / "viewmodel")
+      .unixSep, pb)
     for msg in pb.messages.values:
       echo msg.filename
       stdout.writeViewModel msg
 
     echo("===========")
-    let gopath = "GOPATH".getenv "c:/users/rahma/go"
-    let info = GrpcServiceInfo(
-      name: "payment_service",
-      basepath: "paxelit/payment",
-      gopath: gopath)
     stdout.write writeGoService(info, pb)
     echo("=============")
     stdout.write writeGoModel(info, pb)
