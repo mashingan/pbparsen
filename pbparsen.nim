@@ -188,6 +188,15 @@ proc proto(exprs: varargs[Expr]): Proto =
         let msgs = expr.parseMessage
         for msg in msgs:
           messages[msg.name] = msg
+      of Enum:
+        # to be added later
+        discard
+      of Rpc:
+        # to be added later
+        discard
+      of OneOf:
+        # to be added later
+        discard
       else:
         discard
     else:

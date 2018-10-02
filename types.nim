@@ -7,6 +7,9 @@ type
   Construct* = enum
     Service = "service"
     Message = "message"
+    Enum = "enum"
+    OneOf = "oneof"
+    Rpc = "rpc"
 
   Expr* = ref object
     case kind*: ExprKind
