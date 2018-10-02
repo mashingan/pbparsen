@@ -48,3 +48,8 @@ type
     syntax*: string
     messages*: TableRef[string, MessageProto]
     services*: TableRef[string, ServiceProto]
+
+  GrpcServiceInfo* = object
+    name*: string
+    basepath*: string
+    gopath*: string

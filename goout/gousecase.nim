@@ -12,7 +12,8 @@ import (
 )
 
 #for svc in pb.services.values:
-type $svc.name interface {
+#var usecasename = svc.name & "Usecase"
+type $usecasename interface {
         #for rpc in svc.rpcs.values:
         $rpc.goRpc
         #end for

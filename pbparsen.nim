@@ -6,7 +6,7 @@ import sugar
 import types, utils
 export types, utils
 
-import goout/[gousecase, goviewmodel]
+import goout/[gousecase, goviewmodel, goservice, gomodel]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -251,28 +251,27 @@ proc parsePb*(fname: string): Proto =
 
 when isMainModule:
   proc main =
-    when false:
-      let fname = "dummy.proto"
-      var fs = newFileStream fname
-      var exprs = newseq[Expr]()
-      var pb = initProto()
-      while not fs.atEnd:
-        let expr = fs.getExpr
-        if not expr.isNil:
-          exprs.add expr
-          pb.proto expr
-      for _, msg in pb.messages.mpairs:
-        msg.normalizeFieldType pb.messages
-
-      echo pb
-
     if paramCount() < 1:
       quit "Please provide protobuf file"
 
     var pb = paramStr(1).parsePb
-    #echo pb
-    stdout.writeUseCase(getCurrentDir() / "viewmodel", pb)
+    echo pb
+    echo("===========")
+    stdout.writeUseCase((getCurrentDir() / "viewmodel").replace('\\', '/'),
+      pb)
     for msg in pb.messages.values:
+      echo msg.filename
       stdout.writeViewModel msg
+
+    echo("===========")
+    let gopath = "GOPATH".getenv "c:/users/rahma/go"
+    let info = GrpcServiceInfo(
+      name: "payment_service",
+      basepath: "paxelit/payment",
+      gopath: gopath)
+    stdout.write writeGoService(info, pb)
+    echo("=============")
+    stdout.write writeGoModel(info, pb)
+    echo gopath
 
   main()

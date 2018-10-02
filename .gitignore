@@ -15,4 +15,5 @@
 *.tar.gz
 *.zip
 
+*.go
 nimcache/
