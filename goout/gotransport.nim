@@ -10,9 +10,8 @@
 ##TODO: complete gotransport definition
 #{.fatal: "incomplete implementation".}
 /*
-Generated with pbparsen (c) Rahmatullah
-#var generatedTime = format(now(), "dd-MM-yyyy HH:mm:sszzz")
-@ $generatedTime
+#var cpright = $copyright()
+$cpright
 */
 
 package transport

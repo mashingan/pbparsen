@@ -10,6 +10,10 @@
 #var servpath = (info.basepath / info.name.toSnakeCase).replace('\\', '/')
 #var vmpath = servpath & "/viewmodel"
 #var pbpath = servpath & "/usecase"
+/*
+#var cpright = $copyright()
+$cpright
+*/
 package model
 
 import (

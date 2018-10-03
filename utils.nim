@@ -133,3 +133,7 @@ proc serviceRpc*(rpc: RpcProto): string =
     res = rpc.response
   result = fmt"(ctx context.Context, in {req.mapKind})({res.mapKind}, error)"
 template unixSep*(str: string): untyped = str.replace('\\', '/')
+
+proc copyright*(): string =
+  result = fmt"""Generated with pbparsen (c) Rahmatullah
+@ {format(now(), "dd-MM-yyyy HH:mm:sszzz")}"""
