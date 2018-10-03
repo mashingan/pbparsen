@@ -132,3 +132,4 @@ proc serviceRpc*(rpc: RpcProto): string =
     req = rpc.request
     res = rpc.response
   result = fmt"(ctx context.Context, in {req.mapKind})({res.mapKind}, error)"
+template unixSep*(str: string): untyped = str.replace('\\', '/')

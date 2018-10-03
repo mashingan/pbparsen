@@ -6,7 +6,7 @@ import sugar
 import types, utils
 export types, utils
 
-import goout/[gousecase, goviewmodel, goservice, gomodel]
+import goout/[gousecase, goviewmodel, goservice, gomodel, goerrors]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -250,9 +250,6 @@ proc parsePb*(fname: string): Proto =
   result.normalizeFieldType
 
 when isMainModule:
-  template unixSep(str: string): untyped =
-    str.replace('\\', '/')
-
   proc main =
     if paramCount() < 1:
       quit "Please provide protobuf file"
@@ -262,7 +259,7 @@ when isMainModule:
 
     let gopath = "GOPATH".getenv((getHomeDir() / "go").unixSep)
     let info = GrpcServiceInfo(
-      name: "payment_service",
+      name: "payment",
       basepath: "paxelit/payment",
       gopath: gopath)
     echo("===========")
