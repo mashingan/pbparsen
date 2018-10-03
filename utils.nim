@@ -1,4 +1,4 @@
-import strutils, tables, strformat, sequtils
+import strutils, tables, strformat, sequtils, times
 import sugar
 
 import types
@@ -135,5 +135,6 @@ proc serviceRpc*(rpc: RpcProto): string =
 template unixSep*(str: string): untyped = str.replace('\\', '/')
 
 proc copyright*(): string =
+  let currtime = format(now(), "dd-MM-yyyy'T'HH:mm:sszzz")
   result = fmt"""Generated with pbparsen (c) Rahmatullah
-@ {format(now(), "dd-MM-yyyy HH:mm:sszzz")}"""
+@ {currtime}"""
