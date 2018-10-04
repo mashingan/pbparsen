@@ -283,6 +283,7 @@ proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
 
   let f = open(ucpath / "usecase.go")
   f.writeUsecase(svcpath / "vm", pb)
+  close f
 
 proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
   {.fatal: "not implemented yet".}
