@@ -1,4 +1,4 @@
-import strutils, tables, strformat, sequtils, times
+import strutils, tables, strformat, sequtils, times, os, parsecfg
 import sugar
 
 import types
@@ -138,3 +138,43 @@ proc copyright*(): string =
   let currtime = format(now(), "dd-MM-yyyy'T'HH:mm:sszzz")
   result = fmt"""Generated with pbparsen (c) Rahmatullah
 @ {currtime}"""
+
+proc getConfigFilename(): string =
+  result = ""
+  if paramCount() > 1:
+    result = paramStr 1
+  else:
+    echo "no file argument provided, looking for first found .cfg file!"
+    for path in getCurrentDir().parentDirs():
+      if path.endsWith ".cfg":
+        echo fmt"using {path} config"
+        result = path
+        break
+
+  if result == "":
+    quit "Please provide config or any file with .cfg extension"
+
+template `->`(cfg: Config, keyval: tuple[key, val: string]): untyped =
+  cfg.getSectionValue(keyval[0], keyval[1])
+
+proc getConfigCmd*(): (GrpcServiceInfo, string, string) =
+  var
+    fname = getConfigFilename()
+    config = loadConfig fname
+    gopath = config -> ("project", "gopath")
+
+  while gopath == "":
+    let goenv = getEnv("GOPATH")
+    if goenv != "": gopath = goenv
+    else: gopath = getHomeDir() / "go"
+  let info = GrpcServiceInfo(
+    name: config -> ("project", "name"),
+    basepath: config -> ("project", "basepath"),
+    gopath: gopath,
+    raven: config -> ("raven", "path"))
+  result = (info, config -> ("sql", "filename"),
+    config -> ("protobuf", "filename"))
+
+proc funcLogError*(where: string, what = "err"): string =
+  """level.Error(r.logger).Log("function", "$#", "Error", $#)""" %
+    [where, what]

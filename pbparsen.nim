@@ -1,13 +1,12 @@
-import strutils, streams, strformat, tables, sequtils
-import os
+import strutils, streams, strformat, tables, sequtils, os, sugar
 
-import sugar
+import sqlgen
 
 import types, utils
 export types, utils
 
 import goout/[gousecase, goviewmodel, goservice, gomodel, goerrors,
-              goendpoints, gotransport]
+              goendpoints, gotransport, gorepository]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -104,7 +103,7 @@ proc getArity(str: string): ArityService =
     result = ArityService(`type`: arity[0])
 
 proc parseRpc(strexpr: string): RpcProto =
-  var s = newStringStream strexpr
+  let s = newStringStream strexpr
   while not s.atEnd:
     let rpc = s.readStr 3
     if rpc != "rpc": return RpcProto()
@@ -157,10 +156,6 @@ proc parseMessage(expr: Expr): seq[MessageProto] =
       msg.fields[field.name] = field
       result.add msg
     of Bracket:
-      #[
-      for msg in fld.parseMessage expr.name:
-        result.add msg
-        ]#
       var msgs = fld.parseMessage
       for msg in msgs.mitems:
         msg.name = [expr.name, msg.name].join(".")
@@ -206,7 +201,7 @@ proc proto(exprs: varargs[Expr]): Proto =
   result.messages = messages
 
 proc proto(pb: var Proto, expr: Expr) =
-  var prot = expr.proto
+  let prot = expr.proto
   if prot.syntax != "":
     pb.syntax = prot.syntax
   for name, svc in prot.services:
@@ -250,8 +245,62 @@ proc parsePb*(fname: string): Proto =
 
   result.normalizeFieldType
 
+proc writeGoEntity(fname: string, info: GrpcServiceInfo): seq[SqlTable] =
+  let sqltables = fname.parseSql.parse.getTables
+  let entitypath = info.basepath / "dummy_service" / "entity"
+  if not entitypath.existsDir:
+    createDir entitypath
+
+  var entityfile: File
+  let entityfname = entitypath / "entity.go"
+  if entityfname.fileExists:
+    entityfile = entityfname.open fmReadWrite
+  else:
+    entityfile = entityfname.open fmWrite
+
+  entityfile.writeGoEntity(sqltables,
+    needtime = sqltables.needtime, version = "0.1.0")
+  close entityfile
+  result = sqltables
+
+proc writeGoRepository(sqltbls: seq[SqlTable], svcname, svcpath,
+    version: string) =
+  var repopath = svcpath / "repository"
+  if not svcpath.dirExists:
+    createDir repopath
+  for sqltable in sqltbls:
+    var f = open(repopath / (sqltable.name & ".go"), fmWrite)
+    f.write gorepository(sqltable, svcname, svcpath, version = version)
+    close f
+
+# TODO: finish each writer implementation
+proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
+proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
+proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
+proc writeModelWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
+proc writeEndpointsWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
+proc writeTransportWith(pb: Proto, info: GrpcServiceInfo) =
+  {.fatal: "not implemented yet".}
+  discard
+
 when isMainModule:
   proc main =
+    #[
     if paramCount() < 1:
       quit "Please provide protobuf file"
 
@@ -279,5 +328,21 @@ when isMainModule:
     echo("=============")
     stdout.write writeGoTransport(info, pb)
     echo gopath
+    ]#
+    let (info, sqlfile, pbfile) = getConfigCmd()
+    if sqlfile != "":
+      let tbls = sqlfile.writeGoEntity info
+      tbls.writeGoRepository(info.name,
+        (info.basepath / info.name & "_service"),
+        version = "0.1.0")
+
+    if pbfile != "":
+      let pb = pbfile.parsePb
+      pb.writeUsecaseWith info
+      pb.writeViewmodelWith info
+      pb.writeServiceWith info
+      pb.writeModelWith info
+      pb.writeEndpointsWith info
+      pb.writeTransportWith info
 
   main()
