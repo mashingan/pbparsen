@@ -7,7 +7,7 @@ import types, utils
 export types, utils
 
 import goout/[gousecase, goviewmodel, goservice, gomodel, goerrors,
-              goendpoints]
+              goendpoints, gotransport]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -276,6 +276,8 @@ when isMainModule:
     stdout.write writeGoModel(info, pb)
     echo("=============")
     stdout.write writeGoEndpoints(info, pb)
+    echo("=============")
+    stdout.write writeGoTransport(info, pb)
     echo gopath
 
   main()

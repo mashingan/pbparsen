@@ -95,12 +95,12 @@ converter toConstruct*(x: string): Construct = parseEnum[Construct](x)
 template normalize*(str: string): string =
   str.replace('.', '_')
 
-template mappingKind(str: string, default = ""): string =
+template mappingKind*(str: string, default = ""): string =
   if str in gomap: gomap[str]
   elif str.endsWith "Timestamp": "time.Time"
   elif str.endsWith "Any": "interface{}"
   elif default != "": default
-  else: str.normalize
+  else: utils.normalize(str)
 
 proc mapKind*(field: FieldProto): string =
   field.kind.mappingKind(field.kind.normalize)
