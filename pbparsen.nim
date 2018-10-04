@@ -273,21 +273,32 @@ proc writeGoRepository(sqltbls: seq[SqlTable], svcname, svcpath,
     f.write gorepository(sqltable, svcname, svcpath, version = version)
     close f
 
+proc svcpath(info: GrpcServiceInfo): string =
+  result = info.basepath / (info.name & "_service")
+
+template writingPrologue(info: GrpcServiceInfo, path: string, ident: untyped) =
+  let
+    svcpath {.inject.} = info.svcpath
+    `ident` {.inject.} = svcpath / path
+  static:
+    dump `ident`
+  if not `ident`.dirExists:
+    createDir `ident`
+
 # TODO: finish each writer implementation
 proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
-  let
-    svcpath = info.basepath / (info.name & "_service")
-    ucpath = svcpath / "usecase"
-  if not ucpath.dirExists:
-    createDir ucpath
+  writingPrologue(info, "usecase", usecase)
 
-  let f = open(ucpath / "usecase.go")
+  let f = open(usecasepath / "usecase.go")
   f.writeUsecase(svcpath / "vm", pb)
   close f
 
 proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  info.writingPrologue("vm", vmpath)
+  for msg in pb.messages.values:
+    let f = open(vmpath / (msg.name & ".go"))
+    f.writeViewModel msg
+    close f
 
 proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
   {.fatal: "not implemented yet".}
@@ -307,49 +318,49 @@ proc writeTransportWith(pb: Proto, info: GrpcServiceInfo) =
 
 when isMainModule:
   proc main =
-    #[
-    if paramCount() < 1:
-      quit "Please provide protobuf file"
+    when not defined(release):
+      if paramCount() < 1:
+        quit "Please provide protobuf file"
 
-    var pb = paramStr(1).parsePb
-    echo pb
+      var pb = paramStr(1).parsePb
+      echo pb
 
-    let gopath = "GOPATH".getenv((getHomeDir() / "go").unixSep)
-    let info = GrpcServiceInfo(
-      name: "payment",
-      basepath: "paxelit/payment",
-      gopath: gopath)
-    echo("===========")
-    stdout.writeUseCase((gopath / info.basepath / info.name / "viewmodel")
-      .unixSep, pb)
-    for msg in pb.messages.values:
-      echo msg.filename
-      stdout.writeViewModel msg
+      let gopath = "GOPATH".getenv((getHomeDir() / "go").unixSep)
+      let info = GrpcServiceInfo(
+        name: "payment",
+        basepath: "paxelit/payment",
+        gopath: gopath)
+      echo("===========")
+      stdout.writeUseCase((gopath / info.basepath / info.name / "viewmodel")
+        .unixSep, pb)
+      for msg in pb.messages.values:
+        echo msg.filename
+        stdout.writeViewModel msg
 
-    echo("===========")
-    stdout.write writeGoService(info, pb)
-    echo("=============")
-    stdout.write writeGoModel(info, pb)
-    echo("=============")
-    stdout.write writeGoEndpoints(info, pb)
-    echo("=============")
-    stdout.write writeGoTransport(info, pb)
-    echo gopath
-    ]#
-    let (info, sqlfile, pbfile) = getConfigCmd()
-    if sqlfile != "":
-      let tbls = sqlfile.writeGoEntity info
-      tbls.writeGoRepository(info.name,
-        (info.basepath / info.name & "_service"),
-        version = "0.1.0")
+      echo("===========")
+      stdout.write writeGoService(info, pb)
+      echo("=============")
+      stdout.write writeGoModel(info, pb)
+      echo("=============")
+      stdout.write writeGoEndpoints(info, pb)
+      echo("=============")
+      stdout.write writeGoTransport(info, pb)
+      echo gopath
+    else:
+      let (info, sqlfile, pbfile) = getConfigCmd()
+      if sqlfile != "":
+        let tbls = sqlfile.writeGoEntity info
+        tbls.writeGoRepository(info.name,
+          (info.basepath / info.name & "_service"),
+          version = "0.1.0")
 
-    if pbfile != "":
-      let pb = pbfile.parsePb
-      pb.writeUsecaseWith info
-      pb.writeViewmodelWith info
-      pb.writeServiceWith info
-      pb.writeModelWith info
-      pb.writeEndpointsWith info
-      pb.writeTransportWith info
+      if pbfile != "":
+        let pb = pbfile.parsePb
+        pb.writeUsecaseWith info
+        pb.writeViewmodelWith info
+        pb.writeServiceWith info
+        pb.writeModelWith info
+        pb.writeEndpointsWith info
+        pb.writeTransportWith info
 
   main()
