@@ -275,8 +275,14 @@ proc writeGoRepository(sqltbls: seq[SqlTable], svcname, svcpath,
 
 # TODO: finish each writer implementation
 proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  let
+    svcpath = info.basepath / (info.name & "_service")
+    ucpath = svcpath / "usecase"
+  if not ucpath.dirExists:
+    createDir ucpath
+
+  let f = open(ucpath / "usecase.go")
+  f.writeUsecase(svcpath / "vm", pb)
 
 proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
   {.fatal: "not implemented yet".}
