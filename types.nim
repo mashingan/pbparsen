@@ -53,3 +53,4 @@ type
     name*: string
     basepath*: string
     gopath*: string
+    raven*: string

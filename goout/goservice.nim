@@ -27,7 +27,9 @@ import (
         vm "$vmpath"
         usecase "$ucpath"
 
+#if info.raven != "":
         raven "github.com/getsentry/raven-go"
+#end if
         "google.golang.org/grpc/metadata"
         level "github.com/go-kit/kit/log/level"
         logging "github.com/go-kit/kit/log"
@@ -55,7 +57,9 @@ func (s $servimpl) $rpcname $rpc.serviceRpc {
         a, err := s.usecase.$rpcname(in)
         if err != nil {
                 level.Error(s.logger).Log("function", "$servimpl $rpcname", "Error", err)
+                #if info.raven != "":
                 raven.CaptureErrorAndWait(err, nil)
+                #end if
                 return nil, err
         }
         if a == nil {
