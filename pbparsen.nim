@@ -276,33 +276,34 @@ proc writeGoRepository(sqltbls: seq[SqlTable], svcname, svcpath,
 proc svcpath(info: GrpcServiceInfo): string =
   result = info.basepath / (info.name & "_service")
 
-template writingPrologue(info: GrpcServiceInfo, path: string, ident: untyped) =
+template writingPrologue(info: GrpcServiceInfo, inner: bool, path: string, ident: untyped) =
   let
-    svcpath {.inject.} = info.svcpath
+    svcpath {.inject.} = if inner: info.svcpath
+                         else: info.basepath / info.name
     `ident` {.inject.} = svcpath / path
-  static:
-    dump `ident`
   if not `ident`.dirExists:
     createDir `ident`
 
 # TODO: finish each writer implementation
 proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
-  writingPrologue(info, "usecase", usecase)
+  writingPrologue(info, true, "usecase", usecasepath)
 
-  let f = open(usecasepath / "usecase.go")
+  let f = open(usecasepath / "usecase.go", fmWrite)
   f.writeUsecase(svcpath / "vm", pb)
   close f
 
 proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
-  info.writingPrologue("vm", vmpath)
+  info.writingPrologue(true, "vm", vmpath)
   for msg in pb.messages.values:
-    let f = open(vmpath / (msg.name & ".go"))
+    let f = open(vmpath / (msg.name & ".go"), fmWrite)
     f.writeViewModel msg
     close f
 
 proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  info.writingPrologue(true, "service", servicepath)
+  let f = open(servicepath / "service.go", fmWrite)
+  f.write writeGoService(info, pb)
+  close f
 
 proc writeModelWith(pb: Proto, info: GrpcServiceInfo) =
   {.fatal: "not implemented yet".}
