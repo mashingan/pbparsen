@@ -306,18 +306,20 @@ proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
   close f
 
 proc writeModelWith(pb: Proto, info: GrpcServiceInfo) =
-  info.writingPrologue(false, "service", modelpath)
+  info.writingPrologue(false, "model", modelpath)
   let f = open(modelpath / "model.go", fmWrite)
   f.write writeGoModel(info, pb)
   close f
 
 proc writeEndpointsWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  info.writingPrologue(false, "endpoints", endpath)
+  let f = open(endpath / "endpoint.go", fmWrite)
+  close f
 
 proc writeTransportWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  info.writingPrologue(false, "transport", transportpath)
+  let f = open(transportpath / "transport.go", fmWrite)
+  close f
 
 when isMainModule:
   proc main =
