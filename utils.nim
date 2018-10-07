@@ -141,15 +141,15 @@ proc copyright*(): string =
 
 proc getConfigFilename(): string =
   result = ""
-  if paramCount() > 1:
+  if paramCount() > 0:
     result = paramStr 1
   else:
     echo "no file argument provided, looking for first found .cfg file!"
-    for path in getCurrentDir().parentDirs():
-      if path.endsWith ".cfg":
-        echo fmt"using {path} config"
-        result = path
-        break
+    let currdir = getCurrentDir()
+    for path in walkFiles("*.cfg"):
+      echo fmt"using {path} config"
+      result = path
+      break
 
   if result == "":
     quit "Please provide config or any file with .cfg extension"

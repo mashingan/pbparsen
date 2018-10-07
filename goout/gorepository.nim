@@ -2,7 +2,7 @@
 #
 #import tables, strformat, times
 #import sqlgen
-#import ../utils
+#import utils
 #
 #proc goRepository*(tbl: SqlTable, namesvc, basepath: string, version = ""): string =
 #result = ""
@@ -29,7 +29,13 @@ import (
 
 #var tblname = tbl.name.toPascalCase
 #var reponame = tblname & "Repository"
-#var idtype = tbl.fields["id"].kind.typeMap
+#var idname = tbl.fields.getOrDefault("id")
+#var idtype = ""
+#if idname.kind == "":
+# idtype = "int"
+#else:
+# idtype = idname.kind.typeMap
+#end if
 #var retname = "*entity." & tblname
 #var retnameobj = "entity." & tblname
 #var searchpath = fmt"""r.DB.Exec("SET search_path TO {tbl.schema}")"""

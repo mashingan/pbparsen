@@ -16,14 +16,14 @@ proc writeGoEntity(fname: string, info: GrpcServiceInfo): seq[SqlTable] =
   close entityfile
   result = sqltables
 
-proc writeGoRepository(sqltbls: seq[SqlTable], svcname, svcpath,
+proc writeGoRepository(sqltbls: seq[SqlTable], svcname, thepath,
     version: string) =
-  var repopath = svcpath / "repository"
-  if not svcpath.dirExists:
+  var repopath = thepath / "repository"
+  if not repopath.dirExists:
     createDir repopath
   for sqltable in sqltbls:
     var f = open(repopath / (sqltable.name & ".go"), fmWrite)
-    f.write gorepository(sqltable, svcname, svcpath, version = version)
+    f.write gorepository(sqltable, svcname, thepath, version = version)
     close f
 
 proc svcpath(info: GrpcServiceInfo): string =
