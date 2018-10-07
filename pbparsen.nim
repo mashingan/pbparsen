@@ -300,14 +300,16 @@ proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
     close f
 
 proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
-  info.writingPrologue(true, "service", servicepath)
+  info.writingPrologue(false, "service", servicepath)
   let f = open(servicepath / "service.go", fmWrite)
   f.write writeGoService(info, pb)
   close f
 
 proc writeModelWith(pb: Proto, info: GrpcServiceInfo) =
-  {.fatal: "not implemented yet".}
-  discard
+  info.writingPrologue(false, "service", modelpath)
+  let f = open(modelpath / "model.go", fmWrite)
+  f.write writeGoModel(info, pb)
+  close f
 
 proc writeEndpointsWith(pb: Proto, info: GrpcServiceInfo) =
   {.fatal: "not implemented yet".}
