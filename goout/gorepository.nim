@@ -2,7 +2,7 @@
 #
 #import tables, strformat, times
 #import sqlgen
-#import utils
+#import ../utils
 #
 #proc goRepository*(tbl: SqlTable, namesvc, basepath: string, version = ""): string =
 #result = ""

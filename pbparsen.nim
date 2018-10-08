@@ -280,11 +280,15 @@ when isMainModule:
       echo gopath
     else:
       let (info, sqlfile, pbfile) = getConfigCmd()
+      echo info
       if sqlfile != "":
         let tbls = sqlfile.writeGoEntity info
+        info.writeGoRepository(tbls, version = "0.1.0")
+        #[
         tbls.writeGoRepository(info.name,
-          (info.basepath / info.name & "_service"),
+          (info.basepath / info.name & "_service").unixSep,
           version = "0.1.0")
+          ]#
 
       if pbfile != "":
         let pb = pbfile.parsePb

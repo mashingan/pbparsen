@@ -141,6 +141,7 @@ proc copyright*(): string =
 
 proc getConfigFilename(): string =
   result = ""
+  echo fmt"Current directory {getCurrentDir()}"
   if paramCount() > 0:
     result = paramStr 1
   else:
@@ -170,7 +171,7 @@ proc getConfigCmd*(): (GrpcServiceInfo, string, string) =
   let info = GrpcServiceInfo(
     name: config -> ("project", "name"),
     basepath: config -> ("project", "basepath"),
-    gopath: gopath,
+    gopath: gopath / "src",
     raven: config -> ("raven", "path"))
   result = (info, config -> ("sql", "filename"),
     config -> ("protobuf", "filename"))
@@ -178,3 +179,6 @@ proc getConfigCmd*(): (GrpcServiceInfo, string, string) =
 proc funcLogError*(where: string, what = "err"): string =
   """level.Error(r.logger).Log("function", "$#", "Error", $#)""" %
     [where, what]
+
+proc svcpath*(info: GrpcServiceInfo): string =
+  result = info.basepath / (info.name & "_service")

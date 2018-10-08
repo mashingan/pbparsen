@@ -6,10 +6,11 @@
 #import ../types, ../utils
 #proc writeGoModel*(info: GrpcServiceInfo, pb: Proto): string =
 #result = ""
-#var servname = info.name.toSnakeCase
-#var servpath = (info.basepath / info.name.toSnakeCase).replace('\\', '/')
+#var servname = info.name & "_service"
+##var servpath = (info.basepath / info.name.toSnakeCase).replace('\\', '/')
+#var servpath = (info.basepath / servname).unixSep
 #var vmpath = servpath & "/viewmodel"
-#var pbpath = servpath & "/usecase"
+#var pbpath = (servpath / "pb" / info.name).unixSep
 /*
 #var cpright = $copyright()
 $cpright
@@ -21,13 +22,13 @@ import (
         "log"
         "time"
 
-        $servname "$servpath"
+        //$servname "$servpath"
         vm "$vmpath"
         pb "$pbpath"
 
-        proto "github.com/golang/protobuf/proto"
-        any "github.com/golang/protobuf/ptypes/any"
-        google_protobuf "github.com/golang/protobuf/ptypes/timestamp"
+        _ "github.com/golang/protobuf/proto"
+        _ "github.com/golang/protobuf/ptypes/any"
+        _ "github.com/golang/protobuf/ptypes/timestamp"
 )
 
 #for msg in pb.messages.values:
