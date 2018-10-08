@@ -7,9 +7,9 @@
 #
 #proc writeGoService*(info: GrpcServiceInfo, pb: Proto): string =
 #result = ""
-#var infoserv = info.name & "_service"
+#var infoserv = info.name
 #var servname = info.name.toPascalCase
-#var servpath = (info.basepath / infoserv).replace('\\', '/')
+#var servpath = info.svcpath.unixSep
 #var vmpath = servpath & "/viewmodel"
 #var ucpath = servpath & "/usecase"
 /*
@@ -20,7 +20,6 @@ package service
 
 import (
         "context"
-        "fmt"
         "time"
 
         $infoserv "$servpath"
@@ -34,6 +33,15 @@ import (
         level "github.com/go-kit/kit/log/level"
         logging "github.com/go-kit/kit/log"
 )
+
+#var svcname = servname & "Service"
+type $svcname interface {
+#for svc in pb.services.values:
+    #for rpc in svc.rpcs.values:
+        $rpc.name.toPascalCase $rpc.serviceRpc
+    #end for
+#end for
+}
 
 #var servimpl = servname & "ServiceImpl"
 #var servuc = servname & "Usecase"

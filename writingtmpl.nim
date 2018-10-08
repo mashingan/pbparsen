@@ -23,7 +23,7 @@ proc writeGoRepository(info: GrpcServiceInfo, sqltbls: seq[SqlTable],
   for sqltable in sqltbls:
     let fname = (repopath / (sqltable.name & ".go")).unixSep
     var f = open(fname, fmWrite)
-    f.write gorepository(sqltable, info.name, info.svcpath,
+    f.write gorepository(sqltable, info.name, info.svcpath.unixSep,
       version = version)
     echo fmt"written to {fname}"
     close f

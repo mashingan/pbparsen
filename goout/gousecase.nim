@@ -5,6 +5,11 @@
 #import ../types, ../utils
 #
 #proc writeUseCase*(f: File, path: string, pb: Proto) =
+/*
+#var cpright = $copyright()
+$cpright
+*/
+
 package usecase
 
 import (
