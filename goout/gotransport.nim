@@ -49,7 +49,7 @@ type $servgrpcserv struct {
 #var servend = "endpoints." & info.name.toPascalCase & "Endpoints"
 #var pbserv = "pb." & services[0].name & "Server"
 func New$servgrpcserv(_ context.Context, endpoint $servend) $pbserv {
-        return &servgrpcserv {
+        return &$servgrpcserv {
         #for svc in services:
             #for rpc in svc.rpcs.values:
             #var rpcname = rpc.name.toPascalCase
@@ -74,7 +74,7 @@ func New$servgrpcserv(_ context.Context, endpoint $servend) $pbserv {
     #var rpcname = rpc.name.toPascalCase
     #var rpcgrpc = rpc.name.toPascalCase & "GRPC"
     #var servgrpc = rpcgrpc & ".ServeGRPC(ctx, argin)"
-func (s *$servgrpcserv) $rpcgrpc(ctx context.Context, argin *$request) (*response, error) {
+func (s *$servgrpcserv) $rpcname(ctx context.Context, argin *$request) (*response, error) {
         _, res, err := s.$servgrpc
         if err != nil {
                 _ = status.New(codes.Unknown, err.Error())
