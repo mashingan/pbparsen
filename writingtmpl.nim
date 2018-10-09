@@ -89,3 +89,14 @@ proc writeTransportWith(pb: Proto, info: GrpcServiceInfo) =
   f.write writeGoTransport(info, pb)
   echo fmt"written to {fname}"
   close f
+
+proc writeVarsWith(info: GrpcServiceInfo) =
+  let fullpath = info.gopath / info.svcpath
+  if not fullpath.dirExists:
+    createDir fullpath
+  let
+    fname = fullpath / "vars.go"
+    f = open(fname, fmWrite)
+  f.write info.writeGoVars
+  echo fmt"written to {fname}"
+  close f
