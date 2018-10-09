@@ -100,3 +100,13 @@ proc writeVarsWith(info: GrpcServiceInfo) =
   f.write info.writeGoVars
   echo fmt"written to {fname}"
   close f
+
+proc writeServerDriver(info: GrpcServiceInfo, pb: Proto, tbls: openarray[SqlTable]) =
+  let fullpath = info.gopath / info.basepath
+  if not fullpath.dirExists:
+    createDir fullpath
+  let fname = fullpath / "server_driver.go"
+  var f = open(fname, fmWrite)
+  f.write info.writeServerDriver(pb, tbls)
+  echo fmt"written to {fname}"
+  close f

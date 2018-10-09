@@ -282,17 +282,22 @@ when isMainModule:
       let (info, sqlfile, pbfile) = getConfigCmd()
       echo info
       writeGoVars info
+      var tbls: seq[SqlTable]
       if sqlfile != "":
-        let tbls = sqlfile.writeGoEntity info
+        tbls = sqlfile.writeGoEntity info
         info.writeGoRepository(tbls, version = "0.1.0")
 
+      var pb: Proto
       if pbfile != "":
-        let pb = pbfile.parsePb
+        pb = pbfile.parsePb
         pb.writeUsecaseWith info
         pb.writeViewmodelWith info
         pb.writeServiceWith info
         pb.writeModelWith info
         pb.writeEndpointsWith info
         pb.writeTransportWith info
+
+      if pbfile != "" and sqlfile != "":
+        info.writeServerDriver(pb, tbls)
 
   main()
