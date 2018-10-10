@@ -6,7 +6,7 @@ import types, utils
 export types, utils
 
 import goout/[gousecase, goviewmodel, goservice, gomodel, goerrors,
-              goendpoints, gotransport, gorepository]
+              goendpoints, gotransport, gorepository, goserverdriver]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -281,7 +281,7 @@ when isMainModule:
     else:
       let (info, sqlfile, pbfile) = getConfigCmd()
       echo info
-      writeGoVars info
+      writeVarsWith info
       var tbls: seq[SqlTable]
       if sqlfile != "":
         tbls = sqlfile.writeGoEntity info

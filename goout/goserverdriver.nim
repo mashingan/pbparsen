@@ -49,13 +49,13 @@ import (
         "github.com/jinzhu/gorm"
         _ "github.com/jinzhu/gorm/dialects/postgres"
 
-        repository $repopath
-        usecase $ucpath
-        endpoint $endpath
-        service $servicepath
-        transport $transportpath
-        pb $pbpath
-        cfg $cfgpath
+        repository "$repopath"
+        usecase "$ucpath"
+        endpoint "$endpath"
+        service "$servicepath"
+        transport "$transportpath"
+        pb "$pbpath"
+        cfg "$cfgpath"
 )
 
 var config cfg.Config
@@ -146,7 +146,7 @@ func main() {
         endpoints$svc.name.toPascalCase := endpoint.$svcendpoint{
     #for rpc in svc.rpcs.values:
     #var rpcendpoint = rpc.name.toPascalCase & "Endpoint"
-                $rpcendpoint: endpoint.Make$rpcendpoint($svcname),
+                $rpcendpoint: endpoint.Make$rpcendpoint($svcvar),
     #end for
         }
         go func() {

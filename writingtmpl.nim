@@ -107,6 +107,6 @@ proc writeServerDriver(info: GrpcServiceInfo, pb: Proto, tbls: openarray[SqlTabl
     createDir fullpath
   let fname = fullpath / "server_driver.go"
   var f = open(fname, fmWrite)
-  f.write info.writeServerDriver(pb, tbls)
+  f.write info.writeGoServerDriver(pb, tbls)
   echo fmt"written to {fname}"
   close f
