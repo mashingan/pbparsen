@@ -50,7 +50,7 @@ proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
   close f
 
 proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
-  info.writingPrologue(true, "vm", vmpath)
+  info.writingPrologue(true, "view_model", vmpath)
   for msg in pb.messages.values:
     let fname = (fullpath / (msg.name.toSnakeCase & ".go")).unixSep
     let f = open(fname, fmWrite)
