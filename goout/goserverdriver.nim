@@ -25,7 +25,7 @@
 #var cpright = $copyright()
 $cpright
 */
-package service
+package main
 
 import (
         "context"

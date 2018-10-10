@@ -2,6 +2,7 @@ import strutils, tables, strformat, sequtils, times, os, parsecfg
 import sugar
 
 import types
+from sqlgen import toPascalCase
 
 const
   primitiveTypes* = [
