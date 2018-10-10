@@ -123,7 +123,7 @@ proc needtime*(msg: MessageProto): bool =
 
 proc goProtoField*(field: FieldProto): string =
   let rept = if field.repeated: "[]" else: ""
-  result = fmt"""{field.name.normalize} {rept}{field.mapKind}"""
+  result = fmt"""{field.name.toPascalCase.normalize} {rept}{field.mapKind}"""
 
 proc filename*(msg: MessageProto): string =
   result = msg.name.split('.').map(toSnakeCase).join("_")

@@ -60,7 +60,6 @@ proc writeViewmodelWith(pb: Proto, info: GrpcServiceInfo) =
 
 template writingEpilogue(fname: string, op: untyped): untyped =
   let f = open(fname, fmWrite)
-  #f.write `op`(info, pb)
   f.write `op`
   echo "written to ", fname
   close f
@@ -68,64 +67,34 @@ template writingEpilogue(fname: string, op: untyped): untyped =
 proc writeServiceWith(pb: Proto, info: GrpcServiceInfo) =
   info.writingPrologue(false, "service", servicepath)
   let fname = (fullpath / "service.go").unixSep
-  #fname.writingEpilogue writeGoService
   fname.writingEpilogue writeGoService(info, pb)
 
 proc writeModelWith(pb: Proto, info: GrpcServiceInfo) =
   info.writingPrologue(false, "model", modelpath)
   let fname = (fullpath / "model.go").unixSep
-  #fname.writingEpilogue writeGoModel
   fname.writingEpilogue writeGoModel(info, pb)
 
 proc writeEndpointsWith(pb: Proto, info: GrpcServiceInfo) =
   info.writingPrologue(false, "endpoints", endpath)
   let fname = (fullpath / "endpoint.go").unixSep
-  #fname.writingEpilogue writeGoEndpoints
   fname.writingEpilogue writeGoEndpoints(info, pb)
 
 proc writeTransportWith(pb: Proto, info: GrpcServiceInfo) =
   info.writingPrologue(false, "transport", transportpath)
   let fname = (fullpath / "transport.go").unixSep
-  #fname.writingEpilogue writeGoTransport
   fname.writingEpilogue writeGoTransport(info, pb)
 
 proc writeVarsWith(info: GrpcServiceInfo) =
   info.writingPrologue(true, "", varspath)
   let fname = fullpath / "vars.go"
-  #[
-  if not fullpath.dirExists:
-    createDir fullpath
-  let
-    fname = fullpath / "vars.go"
-    f = open(fname, fmWrite)
-  f.write info.writeGoVars
-  echo fmt"written to {fname}"
-  close f
-  ]#
   fname.writingEpilogue writeGoVars(info)
 
 proc writeServerDriver(info: GrpcServiceInfo, pb: Proto, tbls: openarray[SqlTable]) =
   info.writingPrologue(false, "", mainpath)
   let fname = fullpath / "server_driver.go"
-  #[
-  var f = open(fname, fmWrite)
-  f.write info.writeGoServerDriver(pb, tbls)
-  echo fmt"written to {fname}"
-  close f
-  ]#
   fname.writingEpilogue writeGoServerDriver(info, pb, tbls)
 
 proc writeConfig(info: GrpcServiceInfo) =
-  #[
-  let fullpath = info.gopath / info.basepath / "config"
-  if not fullpath.dirExists:
-    createDir fullpath
-  let fname = fullpath / "config.go"
-  var f = open(fname, fmWrite)
-  f.write info.writeGoConfig
-  echo fmt"written to {fname}"
-  close f
-  ]#
   info.writingPrologue(false, "config", cfgpath)
   let fname = fullpath / "config.go"
   fname.writingEpilogue writeGoConfig(info)
