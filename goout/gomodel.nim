@@ -9,7 +9,7 @@
 #var servname = info.name & "_service"
 ##var servpath = (info.basepath / info.name.toSnakeCase).replace('\\', '/')
 #var servpath = (info.basepath / servname).unixSep
-#var vmpath = servpath & "/viewmodel"
+#var vmpath = servpath & "/view_model"
 #var pbpath = (servpath / "pb" / info.name).unixSep
 /*
 #var cpright = $copyright()

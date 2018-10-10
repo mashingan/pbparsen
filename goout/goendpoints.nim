@@ -15,7 +15,7 @@ package endpoints
 
 #var servname = info.name.toPascalCase
 #var servpath = info.name & "_service"
-#var vmpath = (info.basepath / servpath / "viewmodel").unixSep
+#var vmpath = (info.basepath / servpath / "view_model").unixSep
 #var svcpath = (info.basepath / "service").unixSep
 import (
         "context"

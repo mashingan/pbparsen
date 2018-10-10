@@ -10,7 +10,7 @@
 #var infoserv = info.name
 #var servname = info.name.toPascalCase
 #var servpath = info.svcpath.unixSep
-#var vmpath = servpath & "/viewmodel"
+#var vmpath = servpath & "/view_model"
 #var ucpath = servpath & "/usecase"
 /*
 #var cpright = $copyright()
