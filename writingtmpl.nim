@@ -45,7 +45,7 @@ proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
 
   let fname = (fullpath / "usecase.go").unixSep
   let f = open(fname, fmWrite)
-  f.writeUsecase((svcpath / "vm").unixSep, pb)
+  f.writeUsecase((svcpath / "view_model").unixSep, pb)
   echo fmt"written to {fname}"
   close f
 
