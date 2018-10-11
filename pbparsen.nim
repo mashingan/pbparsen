@@ -283,7 +283,8 @@ when isMainModule:
       let (info, sqlfile, pbfile) = getConfigCmd()
       echo info
       writeVarsWith info
-      writeConfig info
+      writeConfigWith info
+      writeJsonConfigWith info
       var tbls: seq[SqlTable]
       if sqlfile != "":
         tbls = sqlfile.writeGoEntity info

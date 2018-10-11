@@ -94,7 +94,28 @@ proc writeServerDriver(info: GrpcServiceInfo, pb: Proto, tbls: openarray[SqlTabl
   let fname = fullpath / "server_driver.go"
   fname.writingEpilogue writeGoServerDriver(info, pb, tbls)
 
-proc writeConfig(info: GrpcServiceInfo) =
+proc writeConfigWith(info: GrpcServiceInfo) =
   info.writingPrologue(false, "config", cfgpath)
   let fname = fullpath / "config.go"
   fname.writingEpilogue writeGoConfig(info)
+
+import json
+proc writeJsonConfigWith(info: GrpcServiceInfo) =
+  info.writingPrologue(false, "", cfgpath)
+  let fname = fullpath / "config.json"
+  fname.writingEpilogue:
+    (%* {
+      "debug": true,
+      "sentry": info.raven,
+      "logfile": "",
+      "server": {
+        "address": ":8094"
+      },
+      "database": {
+        "host": "localhost",
+        "port": 5432,
+        "user": "postgres",
+        "pass": "postgres",
+        "name": "dummyregdb"
+      }
+    }).pretty(indent = 4)
