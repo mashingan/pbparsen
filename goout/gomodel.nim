@@ -34,9 +34,15 @@ import (
 #for msg in pb.messages.values:
     #var msgname = utils.normalize(msg.name.toPascalCase)
 func EncodeGRPC$msgname(_ context.Context, r interface{}) (interface{}, error) {
-        req := r.(vm.$msgname)
+    #var fields = newseq[FieldProto]()
+    #for fld in msg.fields.values:
+        #fields.add fld
+    #end for
+    #if fields.len != 0:
+        req := r.(*vm.$msgname)
+    #end if
         return &pb.$msgname {
-    #for field in msg.fields.values:
+    #for field in fields:
     #    var fldname = field.name.toPascalCase
                 $fldname: req.$fldname,
     #end for
@@ -44,9 +50,11 @@ func EncodeGRPC$msgname(_ context.Context, r interface{}) (interface{}, error) {
 }
 
 func DecodeGRPC$msgname(_ context.Context, r interface{}) (interface{}, error) {
+    #if fields.len != 0:
         req := r.(*pb.$msgname)
+    #end if
         return vm.$msgname {
-    #for field in msg.fields.values:
+    #for field in fields:
     #    var fldname = field.name.toPascalCase
                 $fldname: req.$fldname,
     #end for
