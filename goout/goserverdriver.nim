@@ -85,7 +85,7 @@ func main() {
         dbHost, dbPort, dbUser, dbPass, dbName := getServConfig(config)
 
         val := url.Values{}
-        val.add("parseTime", "1")
+        val.Add("parseTime", "1")
         val.Add("loc", "Asia/Jakarta")
 
         db, err := gorm.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", dbHost, dbPort, dbUser, dbName, dbPass))
