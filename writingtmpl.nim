@@ -1,6 +1,6 @@
 proc writeGoEntity(fname: string, info: GrpcServiceInfo): seq[SqlTable] =
   let sqltables = fname.parseSql.parse.getTables
-  let entitypath = (info.basepath / "dummy_service" / "entity").unixSep
+  let entitypath = (info.svcpath / "entity").unixSep
   let fullbasepath = info.gopath / entitypath
   if not fullbasepath.existsDir:
     createDir fullbasepath

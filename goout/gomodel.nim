@@ -19,8 +19,8 @@ package model
 
 import (
         "context"
-        "log"
-        "time"
+        _ "log"
+        _ "time"
 
         //$servname "$servpath"
         vm "$vmpath"

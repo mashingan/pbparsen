@@ -71,7 +71,7 @@ func (s $servimpl) $rpcname $rpc.serviceRpc {
                 return nil, err
         }
         if a == nil {
-#    var errnotfound = infoserv & ".ErrNotFoundError"
+#    var errnotfound = infoserv & ".ErrNotFound"
                 return nil, $errnotfound
         }
         defer func(begin time.Time) {

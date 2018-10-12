@@ -114,7 +114,7 @@ proc goRpc*(rpc: RpcProto): string =
     reqarity = "x " & rpc.request.mapKind
     resarity = rpc.response.mapKind & ", error"
 
-  result = fmt"""{rpc.name}({$reqarity}) ({$resarity})"""
+  result = fmt"""{rpc.name}({$reqarity}) (*{$resarity})"""
 
 proc needtime*(msg: MessageProto): bool =
   for field in msg.fields.values:
@@ -132,7 +132,7 @@ proc serviceRpc*(rpc: RpcProto): string =
   let
     req = rpc.request
     res = rpc.response
-  result = fmt"(ctx context.Context, in {req.mapKind})({res.mapKind}, error)"
+  result = fmt"(ctx context.Context, in {req.mapKind})(*{res.mapKind}, error)"
 template unixSep*(str: string): untyped = str.replace('\\', '/')
 
 proc copyright*(): string =

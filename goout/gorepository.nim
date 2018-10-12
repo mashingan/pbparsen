@@ -40,7 +40,7 @@ import (
 #var retnameobj = "entity." & tblname
 #var searchpath = fmt"""r.DB.Exec("SET search_path TO {tbl.schema}")"""
 #var hasschema = tbl.schema != ""
-#var errnotfound = namesvc & ".ErrNotFoundError"
+#var errnotfound = namesvc & ".ErrNotFound"
 #var errinvalidop = namesvc & ".InvalidSqlOperation"
 #var flogerr = ""
 type $reponame interface {
