@@ -107,7 +107,7 @@ proc writeJsonConfigWith(info: GrpcServiceInfo) =
     (%* {
       "debug": true,
       "sentry": info.raven,
-      "logfile": "",
+      "logfile": info.name & ".log",
       "server": {
         "address": ":8094"
       },
