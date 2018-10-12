@@ -23,7 +23,7 @@ import (
 #var endpath = (info.basepath / "endpoints").unixSep
 #var modelpath = (info.basepath / "model").unixSep
         pb "$pbpath"
-        $servname "$servpath"
+        //$infoname "$servpath"
         endpoints "$endpath"
         model "$modelpath"
 
