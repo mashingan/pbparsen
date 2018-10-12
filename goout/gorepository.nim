@@ -41,13 +41,13 @@ import (
 #var searchpath = fmt"""r.DB.Exec("SET search_path TO {tbl.schema}")"""
 #var hasschema = tbl.schema != ""
 #var errnotfound = namesvc & ".ErrNotFound"
-#var errinvalidop = namesvc & ".InvalidSqlOperation"
+#var errinvalidop = namesvc & ".ErrInvalidSqlOperation"
 #var flogerr = ""
 type $reponame interface {
         GetById(id $idtype)($retname, error)
         Get$tblname(limit, page int) ([]$retnameobj, error)
         GetWith(fmtval map[string][]interface{}) ([]$retnameobj, error)
-        Create$tblname(obj $retnameobj) ($retnameobj, error)
+        Create$tblname(obj $retname) ($retname, error)
         DeleteById(id $idtype) ($retname, error)
         DeleteWith(fmtval map[string][]interface{}) ([]$retnameobj, error)
         UpdateById(obj $retname, id $idtype) ($retname, error)
@@ -55,7 +55,7 @@ type $reponame interface {
 
 #var repoimpl = reponame & "Impl"
 type $repoimpl struct {
-        *gorm.DB
+        DB *gorm.DB
         logger logging.Logger
 }
 
@@ -98,11 +98,12 @@ func (r *$repoimpl) GetWith(fmtval map[string][]interface{}) ([]$retnameobj, err
         $searchpath
         #end if
         for key, opval := range fmtval {
-                op := string(opval[0])
+                //op := string(opval[0])
+                op, _ := (opval[0]).(string)
                 val := opval[1]
                 switch s.ToLower(op) {
                 case "and":
-                        r.DB.where(key, val)
+                        r.DB.Where(key, val)
                 case "or":
                         r.DB.Or(key, val)
                 default:
@@ -156,13 +157,16 @@ func (r *$repoimpl) DeleteWith(fmtval map[string][]interface{}) ([]$retnameobj, 
         $searchpath
         #end if
         for key, opval := range fmtval {
-                op := string(opval[0])
+                //op := string(opval[0])
+                op, _ := (opval[0]).(string)
                 val := opval[1]
+                ##var key = """key + " = ?""""
+                #var key = "key + \" = ?\""
                 switch s.ToLower(op) {
                 case "and":
-                        r.DB.Where(key, val)
+                        r.DB.Where($key, val)
                 case "or":
-                        r.DB.Or(key, val)
+                        r.DB.Or($key, val)
                 default:
                         #flogerr = funcLogError(repoimpl & " DeleteWith", errinvalidop)
                         $flogerr
@@ -170,12 +174,12 @@ func (r *$repoimpl) DeleteWith(fmtval map[string][]interface{}) ([]$retnameobj, 
 
                 }
         }
-        if err := r.DB.Find(&result).Error(); err != nil {
+        if err := r.DB.Find(&result).Error; err != nil {
                 #flogerr = funcLogError(repoimpl & " DeleteWith")
                 $flogerr
                 return nil, $errnotfound
         }
-        if err := r.DB.Delete(&result).Error(); err != nil {
+        if err := r.DB.Delete(&result).Error; err != nil {
                 #flogerr = funcLogError(repoimpl & " DeleteWith")
                 $flogerr
                 return nil, err

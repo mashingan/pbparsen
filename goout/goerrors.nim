@@ -12,6 +12,7 @@ var (
         ErrInternalServer = errors.New("Internal server error")
         ErrNotFound = errors.New("Not found")
         ErrConflict = errors.New("Already exists")
+        ErrInvalidSqlOperation = errors.New("Invalid SQL Operation")
 )
 
 var (
