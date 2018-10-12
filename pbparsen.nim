@@ -58,6 +58,8 @@ proc getExpr(s: Stream): Expr =
       while not expr.isEnd:
         data.add expr
         expr = s.getExpr
+      when not defined(release):
+        echo fmt"Bracket: {`type`} {name}"
       return Expr(kind: Bracket, `type`:`type`, name:name, lines: data)
     else:
       buff &= c
@@ -150,6 +152,9 @@ proc parseMessage(expr: Expr): seq[MessageProto] =
     name: expr.name,
     fields: newTable[string, FieldProto]()
   )
+  if expr.lines.len == 0:
+    return @[msg]
+
   for fld in expr.lines:
     case fld.kind
     of SingleLine:
@@ -182,6 +187,8 @@ proc proto(exprs: varargs[Expr]): Proto =
         for svc in svcs:
           services[svc.name] = svc
       of Message:
+        when not defined(release):
+          dump expr
         let msgs = expr.parseMessage
         for msg in msgs:
           messages[msg.name] = msg
@@ -300,7 +307,6 @@ when isMainModule:
         pb.writeEndpointsWith info
         pb.writeTransportWith info
 
-      if pbfile != "" and sqlfile != "":
-        info.writeServerDriver(pb, tbls)
+      info.writeServerDriver(pb, tbls)
 
   main()

@@ -36,7 +36,7 @@ import (
 #for svc in pb.services.values:
 #  services.add svc
 #end for
-#var servgrpcserv = info.name.toPascalCase & "GRPCServer"
+#var servgrpcserv = services[0].name.toPascalCase & "GRPCServer"
 type $servgrpcserv struct {
     #for service in services:
     #    for rpc in service.rpcs.values:
@@ -46,8 +46,9 @@ type $servgrpcserv struct {
     #end for
 }
 
-#var servend = "endpoints." & info.name.toPascalCase & "Endpoints"
-#var pbserv = "pb." & services[0].name & "Server"
+##var servend = "endpoints." & info.name.toPascalCase & "Endpoints"
+#var servend = "endpoints." & services[0].name.toPascalCase & "Endpoints"
+#var pbserv = "pb." & services[0].name.toPascalCase & "Server"
 func New$servgrpcserv(_ context.Context, endpoint $servend) $pbserv {
         return &$servgrpcserv {
         #for svc in services:
@@ -74,7 +75,7 @@ func New$servgrpcserv(_ context.Context, endpoint $servend) $pbserv {
     #var rpcname = rpc.name.toPascalCase
     #var rpcgrpc = rpc.name.toPascalCase & "GRPC"
     #var servgrpc = rpcgrpc & ".ServeGRPC(ctx, argin)"
-func (s *$servgrpcserv) $rpcname(ctx context.Context, argin *$request) (*response, error) {
+func (s *$servgrpcserv) $rpcname(ctx context.Context, argin *$request) (*$response, error) {
         _, res, err := s.$servgrpc
         if err != nil {
                 _ = status.New(codes.Unknown, err.Error())

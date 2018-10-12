@@ -9,6 +9,12 @@
 #result = ""
 #var infoserv = info.name
 #var servname = info.name.toPascalCase
+#var services = newseq[ServiceProto]()
+#for svc in pb.services.values:
+    #services.add svc
+#end for
+#servname = services[0].name.toPascalCase
+#var ucname = services[0].name.toPascalCase & "Usecase"
 #var servpath = info.svcpath.unixSep
 #var vmpath = servpath & "/view_model"
 #var ucpath = servpath & "/usecase"
@@ -46,11 +52,11 @@ type $svcname interface {
 #var servimpl = servname & "ServiceImpl"
 #var servuc = servname & "Usecase"
 type $servimpl struct {
-        usecase usecase.$servuc
+        usecase usecase.$ucname
         logger logging.Logger
 }
 
-func New$servimpl(uc usecase.$servuc, logger logging.Logger) $servimpl {
+func New$servimpl(uc usecase.$ucname, logger logging.Logger) $servimpl {
         return $servimpl{uc, logger}
 }
 

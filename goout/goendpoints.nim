@@ -26,6 +26,11 @@ import (
         endpoint "github.com/go-kit/kit/endpoint"
 )
 
+#var services = newseq[ServiceProto]()
+#for svc in pb.services.values:
+    #services.add svc
+#end for
+#servname = services[0].name.toPascalCase
 #var servend = servname & "Endpoints"
 type $servend struct {
 #for s in pb.services.values:
@@ -52,7 +57,7 @@ func Make$rpcend(s $servsvc) endpoint.Endpoint {
         }
 }
 
-func (e $rpcend) $rpc.name(ctx context.Context, argin *$rpc.request.mapKind) (*$rpc.response.mapKind, error) {
+func (e $servend) $rpc.name(ctx context.Context, argin *$rpc.request.mapKind) (*$rpc.response.mapKind, error) {
         res, err := e.$rpcend(ctx, argin)
         if err != nil {
                 return nil, err

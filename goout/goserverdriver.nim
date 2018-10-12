@@ -43,6 +43,8 @@ import (
         "github.com/getsentry/raven.go"
 #end if
 
+        "google.golang.org/grpc"
+
         logging "github.com/go-kit/kit/log"
         level "github.com/go-kit/kit/log/level"
 
@@ -166,7 +168,7 @@ func main() {
                 handler$svc.name.toPascalCase := transport.New$svcgrpcserv(ctx, endpoints$svc.name.toPascalCase)
                 grpcServe$svc.name.toPascalCase := grpc.NewServer()
 #var svchandler = svc.name.toPascalCase & "Server"
-                pb.$svchandler(grpcServe$svc.name.toPascalCase, handler$svc.name.toPascalCase)
+                pb.Register$svchandler(grpcServe$svc.name.toPascalCase, handler$svc.name.toPascalCase)
 #var grpcserv = svc.name.toPascalCase & ".Serve(listener)"
                 errchan <- grpcServe$grpcserv
         }()

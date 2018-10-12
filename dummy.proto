@@ -9,4 +9,4 @@ service HelloService { // there's a comment here too
 also here too, isn't it nice?
     */
 } message HelloRequest { string name = 1; } message HelloResponse {
-string response = 1; message Nested { int32 f1 = 1; string arbit = 2; } Nested nested = 2; }
+string response = 1; message Nested { int32 f1 = 1; string arbit = 2; } Nested nested = 2; } message Empty {}
