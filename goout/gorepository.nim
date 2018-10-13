@@ -59,7 +59,7 @@ type $repoimpl struct {
         logger logging.Logger
 }
 
-#var instrepo = "New" & repoimpl
+#var instrepo = "New" & reponame
 func $instrepo(db *gorm.DB, logger logging.Logger) $reponame {
         return &$repoimpl{db, logger}
 }

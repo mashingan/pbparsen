@@ -77,8 +77,8 @@ func getDbAs(c cfg.Config, what string) string {
 }
 
 func getServConfig(c cfg.Config) (string, string, string, string, string) {
-        return (getDbAs(c, "host"), getDbAs(c, "port"), getDbAs(c, "user"),
-                getDbAs(c, "pass"), getDbAs(c, "name"))
+        return getDbAs(c, "host"), getDbAs(c, "port"), getDbAs(c, "user"),
+                getDbAs(c, "pass"), getDbAs(c, "name")
 }
 
 func main() {
