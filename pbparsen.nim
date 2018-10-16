@@ -1,4 +1,9 @@
-import strutils, streams, strformat, tables, sequtils, os, sugar
+import strutils, streams, strformat, tables, sequtils, os
+
+when NimMajor >= 19:
+  import sugar
+else:
+  import future
 
 import sqlgen
 

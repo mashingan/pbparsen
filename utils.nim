@@ -1,5 +1,9 @@
 import strutils, tables, strformat, sequtils, times, os, parsecfg
-import sugar
+
+when NimMinor >= 19:
+  import sugar
+else:
+  import future
 
 import types
 from sqlgen import toPascalCase
