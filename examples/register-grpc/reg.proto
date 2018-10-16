@@ -1,0 +1,27 @@
+syntax="proto3";
+
+
+service Register {
+    rpc Register(User) returns (String);
+    rpc GetEmailByName (Name) returns (Email);
+    rpc GetUserByEmail (Email) returns(User);
+    rpc DeleteUser (User) returns (String);
+    rpc ModifyEmail (Email) returns (String);
+}
+
+message User {
+    string name = 1;
+    repeated string emails = 2;
+}
+
+message Name {
+    string name = 1;
+}
+
+message Email {
+    repeated string emails = 1;
+}
+
+message String {
+    string msg = 1;
+}

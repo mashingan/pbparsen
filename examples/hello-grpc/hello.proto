@@ -1,0 +1,13 @@
+syntax="proto3";
+
+
+service Hello {
+    rpc HelloWorld(EmptyMessage) returns (String);
+    rpc EchoHello (String) returns (String);
+}
+
+message EmptyMessage {}
+
+message String {
+    string msg = 1;
+}
