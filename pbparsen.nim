@@ -286,10 +286,12 @@ when isMainModule:
       echo("=============")
       stdout.write writeGoTransport(info, pb)
       echo("=============")
-      let sqlreg = "d:/College/Go/register-grpc/reg.sql"
-      let tbls = sqlreg.parseSql.parse.getTables
-      stdout.writeUsecaseImpl(info, pb, tbls)
-      echo("=============")
+      var tbls = newseq[SqlTable]()
+      if paramStr(1).endsWith "reg.proto":
+        let sqlreg = "d:/College/Go/register-grpc/reg.sql"
+        tbls = sqlreg.parseSql.parse.getTables
+        stdout.writeUsecaseImpl(info, pb, tbls)
+        echo("=============")
       stdout.write writeGoServerDriver(info, pb, tbls)
       echo gopath
     else:
@@ -298,7 +300,7 @@ when isMainModule:
       writeVarsWith info
       writeConfigWith info
       writeJsonConfigWith info
-      var tbls: seq[SqlTable]
+      var tbls = newseq[SqlTable]()
       if sqlfile != "":
         tbls = sqlfile.writeGoEntity info
         info.writeGoRepository(tbls, version = "0.1.0")
@@ -306,7 +308,7 @@ when isMainModule:
       var pb: Proto
       if pbfile != "":
         pb = pbfile.parsePb
-        pb.writeUsecaseWith info
+        pb.writeUsecaseWith(info, tbls)
         pb.writeViewmodelWith info
         pb.writeServiceWith info
         pb.writeModelWith info

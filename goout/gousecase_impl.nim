@@ -19,7 +19,9 @@ package usecase
 import (
         vm "$vmpath"
         $info.name.toSnakeCase "$info.svcpath.unixSep"
+#if tbls.len != 0:
         "$repopath"
+#end if
 )
 
 #for svc in pb.services.values:

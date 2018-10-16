@@ -50,7 +50,9 @@ import (
         "github.com/jinzhu/gorm"
         _ "github.com/jinzhu/gorm/dialects/postgres"
 
+#if tbls.len != 0:
         repository "$repopath"
+#end if
         usecase "$ucpath"
         endpoint "$endpath"
         service "$servicepath"
