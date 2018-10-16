@@ -40,12 +40,18 @@ template writingPrologue(info: GrpcServiceInfo, inner: bool, path: string, ident
   if not fullpath.dirExists:
     createDir fullpath
 
-proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo) =
+proc writeUsecaseWith(pb: Proto, info: GrpcServiceInfo, tbls: seq[SqlTable] = @[]) =
   writingPrologue(info, true, "usecase", usecasepath)
 
-  let fname = (fullpath / "usecase.go").unixSep
-  let f = open(fname, fmWrite)
+  var fname = (fullpath / "usecase.go").unixSep
+  var f = open(fname, fmWrite)
   f.writeUsecase((svcpath / "view_model").unixSep, pb)
+  echo fmt"written to {fname}"
+  close f
+
+  fname = fullpath / (info.name.toSnakeCase & "usecase_impl.go")
+  f = open(fname, fmWrite)
+  f.writeUsecaseImpl(info, pb, tbls)
   echo fmt"written to {fname}"
   close f
 

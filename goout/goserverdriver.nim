@@ -31,7 +31,6 @@ import (
         "context"
         "flag"
         "fmt"
-        "errors"
         "log"
         "net"
         "net/url"
@@ -128,22 +127,29 @@ func main() {
         flag.Parse()
         ctx := context.Background()
 
+#var repovars = newseq[string]()
 #for tbl in tbls:
 #var newrepo = "repository.New" & tbl.name.toPascalCase & "Repository(db, logger)"
+#var tblnames = newseq[string]()
 #var reponame = "repo" & tbl.name.toPascalCase
+        #tblnames.add tbl.name
         $reponame := $newrepo
+        #repovars.add reponame
 #end for
         // implement your own usecase
-        panic("implement usecases")
-
+##var newrepos = info.name.toPascalCase & "Usecase"
+#var newrepoarities = repovars.join(", ")
         errchan := make(chan error)
 #for svc in pb.services.values:
 #var svcname = svc.name.toPascalCase & "Service"
+#var newrepos = svc.name.toPascalCase & "Usecase"
 #var svcvar = "service" & svc.name.toPascalCase
+        ucvar := usecase.New$newrepos($newrepoarities)
+
         var $svcvar service.$svcname
 #var svcimpl = "service.New" & svcname & "Impl"
         // change the `usecaseVar` to use usecase variable
-        $svcvar = $svcimpl(usecaseVar, logger)
+        $svcvar = $svcimpl(ucvar, logger)
 #var svcendpoint = svc.name.toPascalCase & "Endpoints"
         endpoints$svc.name.toPascalCase := endpoint.$svcendpoint{
     #for rpc in svc.rpcs.values:

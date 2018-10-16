@@ -13,6 +13,7 @@ var (
         ErrNotFound = errors.New("Not found")
         ErrConflict = errors.New("Already exists")
         ErrInvalidSqlOperation = errors.New("Invalid SQL Operation")
+        ErrNotImplemented = errors.New("Not implemented")
 )
 
 var (

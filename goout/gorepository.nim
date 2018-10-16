@@ -34,7 +34,7 @@ import (
 #if idname.kind == "":
 # idtype = "int"
 #else:
-# idtype = idname.kind.typeMap
+# idtype = idname.typeMap
 #end if
 #var retname = "*entity." & tblname
 #var retnameobj = "entity." & tblname

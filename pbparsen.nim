@@ -5,9 +5,9 @@ import sqlgen
 import types, utils
 export types, utils
 
-import goout/[gousecase, goviewmodel, goservice, gomodel, goerrors,
+import goout/[gousecase, goviewmodel, goservice, gomodel, govars,
               goendpoints, gotransport, gorepository, goserverdriver,
-              goconfig]
+              goconfig, gousecase_impl]
 
 proc isComment(s: Stream): (bool, bool) =
   try:
@@ -285,6 +285,12 @@ when isMainModule:
       stdout.write writeGoEndpoints(info, pb)
       echo("=============")
       stdout.write writeGoTransport(info, pb)
+      echo("=============")
+      let sqlreg = "d:/College/Go/register-grpc/reg.sql"
+      let tbls = sqlreg.parseSql.parse.getTables
+      stdout.writeUsecaseImpl(info, pb, tbls)
+      echo("=============")
+      stdout.write writeGoServerDriver(info, pb, tbls)
       echo gopath
     else:
       let (info, sqlfile, pbfile) = getConfigCmd()
