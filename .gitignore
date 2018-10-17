@@ -16,3 +16,4 @@
 *.zip
 
 nimcache/
+tmp/

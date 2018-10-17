@@ -49,8 +49,12 @@ type
     messages*: TableRef[string, MessageProto]
     services*: TableRef[string, ServiceProto]
 
+  DbInfo* = object
+    sqltype*, name*, host*, user*, pass*, port*: string
+
   GrpcServiceInfo* = object
     name*: string
     basepath*: string
     gopath*: string
     raven*: string
+    db*: DbInfo
