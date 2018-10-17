@@ -1,6 +1,6 @@
 import strutils, streams, strformat, tables, sequtils, os
 
-when NimMajor >= 19:
+when NimMinor >= 19:
   import sugar
 else:
   import future
@@ -251,6 +251,7 @@ proc normalizeFieldType*(pb: var Proto) =
 proc parsePb*(fname: string): Proto =
   result = initPb()
   var fs = newFileStream fname
+  echo fmt"getting file stream {fname}"
   while not fs.atEnd:
     let expr = fs.getExpr
     if not expr.isNil:
@@ -293,7 +294,7 @@ when isMainModule:
       echo("=============")
       var tbls = newseq[SqlTable]()
       if paramStr(1).endsWith "reg.proto":
-        let sqlreg = "d:/College/Go/register-grpc/reg.sql"
+        let sqlreg = "examples/register-grpc/reg.sql"
         tbls = sqlreg.parseSql.parse.getTables
         stdout.writeUsecaseImpl(info, pb, tbls)
         echo("=============")

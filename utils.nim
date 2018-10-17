@@ -163,21 +163,34 @@ proc getConfigFilename(): string =
 template `->`(cfg: Config, keyval: tuple[key, val: string]): untyped =
   cfg.getSectionValue(keyval[0], keyval[1])
 
+template `=>`(cfg: Config, val: string): untyped =
+  cfg -> ("sql", val)
+
 proc getConfigCmd*(): (GrpcServiceInfo, string, string) =
   var
     fname = getConfigFilename()
     config = loadConfig fname
-    gopath = config -> ("project", "gopath")
+    gopath = absolutePath(config -> ("project", "gopath"))
 
   while gopath == "":
     let goenv = getEnv("GOPATH")
     if goenv != "": gopath = goenv
     else: gopath = getHomeDir() / "go"
-  let info = GrpcServiceInfo(
-    name: config -> ("project", "name"),
-    basepath: config -> ("project", "basepath"),
-    gopath: gopath / "src",
-    raven: config -> ("raven", "path"))
+  let
+    dbinfo = DbInfo(
+      name: config => "name",
+      sqltype: config => "type",
+      host: config => "host",
+      user: config => "user",
+      pass: config => "pass",
+      port: config => "port"
+    )
+    info = GrpcServiceInfo(
+      name: config -> ("project", "name"),
+      basepath: config -> ("project", "basepath"),
+      gopath: gopath / "src",
+      raven: config -> ("raven", "path"),
+      db: dbinfo)
   result = (info, config -> ("sql", "filename"),
     config -> ("protobuf", "filename"))
 

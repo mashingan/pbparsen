@@ -21,6 +21,8 @@
 #else:
 #    hasraven = true
 #end if
+#var notsqlite = info.db.sqltype != "sqlite"
+#var hastable = tbls.len != 0
 /*
 #var cpright = $copyright()
 $cpright
@@ -47,10 +49,15 @@ import (
         logging "github.com/go-kit/kit/log"
         level "github.com/go-kit/kit/log/level"
 
+#if hastable:
         "github.com/jinzhu/gorm"
-        _ "github.com/jinzhu/gorm/dialects/postgres"
+        #var dialect = "postgres"
+        #if info.db.sqltype != "":
+                #dialect = info.db.sqltype
+        #end if
+        #var dialectbuild = "github.com/jinzhu/gorm/dialects/" & dialect
+        _ "$dialectbuild"
 
-#if tbls.len != 0:
         repository "$repopath"
 #end if
         usecase "$ucpath"
@@ -73,6 +80,7 @@ func init() {
 #end if
 }
 
+#if notsqlite:
 func getDbAs(c cfg.Config, what string) string {
         return c.GetString("database." + what)
 }
@@ -81,30 +89,39 @@ func getServConfig(c cfg.Config) (string, string, string, string, string) {
         return getDbAs(c, "host"), getDbAs(c, "port"), getDbAs(c, "user"),
                 getDbAs(c, "pass"), getDbAs(c, "name")
 }
+#end if
 
 func main() {
+#if notsqlite and hastable:
         dbHost, dbPort, dbUser, dbPass, dbName := getServConfig(config)
+#end if
 
         val := url.Values{}
         val.Add("parseTime", "1")
         val.Add("loc", "Asia/Jakarta")
 
-        db, err := gorm.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", dbHost, dbPort, dbUser, dbName, dbPass))
+#if hastable:
+        #var connbuilder = '"' & info.db.name & '"'
+        #if info.db.sqltype != "sqlite":
+                #connbuilder = "fmt.Sprintf(\"host=%s port=%s user=%s dbname=%s password=%s\", dbHost, dbPort, dbUser, dbName, dbPass)"
+        #end if
+        db, err := gorm.Open($info.db.sqltype, $connbuilder)
         defer db.Close()
 
         if err != nil {
                 log.Fatal(err.Error())
         }
 
-#if hasraven:
+        #if hasraven:
         raven.CaptureErrorAndWait(errors.New("custom error"), nil)
-#end if
+        #end if
         if err != nil && config.GetBool("debug") {
-#if hasraven:
+        #if hasraven:
                 raven.CaptureErrorAndWait(err, nil)
-#end if
+        #end if
                 fmt.Println(err)
         }
+#end if
 
         logfile, err := os.OpenFile(config.GetString("logfile"), os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
         if err != nil {

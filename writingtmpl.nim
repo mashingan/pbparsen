@@ -118,10 +118,10 @@ proc writeJsonConfigWith(info: GrpcServiceInfo) =
         "address": ":8094"
       },
       "database": {
-        "host": "localhost",
-        "port": 5432,
-        "user": "postgres",
-        "pass": "postgres",
-        "name": "dummyregdb"
+        "host": info.db.host,
+        "port": info.db.port,
+        "user": info.db.user,
+        "pass": info.db.pass,
+        "name": info.db.name
       }
     }).pretty(indent = 4)
