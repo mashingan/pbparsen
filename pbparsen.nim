@@ -251,7 +251,6 @@ proc normalizeFieldType*(pb: var Proto) =
 proc parsePb*(fname: string): Proto =
   result = initPb()
   var fs = newFileStream fname
-  echo fmt"getting file stream {fname}"
   while not fs.atEnd:
     let expr = fs.getExpr
     if not expr.isNil:

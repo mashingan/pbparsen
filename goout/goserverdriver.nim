@@ -102,10 +102,14 @@ func main() {
 
 #if hastable:
         #var connbuilder = '"' & info.db.name & '"'
-        #if info.db.sqltype != "sqlite":
+        #var driversql = info.db.sqltype
+        #if notsqlite:
                 #connbuilder = "fmt.Sprintf(\"host=%s port=%s user=%s dbname=%s password=%s\", dbHost, dbPort, dbUser, dbName, dbPass)"
         #end if
-        db, err := gorm.Open($info.db.sqltype, $connbuilder)
+        #if not notsqlite:
+                #driversql &= '3'
+        #end if
+        db, err := gorm.Open("$driversql", $connbuilder)
         defer db.Close()
 
         if err != nil {
