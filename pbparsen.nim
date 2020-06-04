@@ -259,6 +259,27 @@ proc parsePb*(fname: string): Proto =
 when defined(release):
   include writingtmpl
 
+  proc compileProtoc(fname: string, info: GrpcServiceInfo): bool =
+    if execShellCmd(&"protoc --go_out=plugins=grpc:. --go_opt=paths=source_relative {fname}") != 0:
+      echo "Error happened when invoking protoc, ensure protoc installed correctly"
+      return false
+    let (_, name, _) = splitFile fname
+    let pbgo = &"{name}.pb.go"
+    info.writingPrologue(true, &"pb/{info.name}", pbpath)
+    let newpath = fullpath / pbgo
+
+    # workaround because moveFile cannot silently be overwritten on windows
+    when defined(windows):
+      if newpath.existsFile:
+        removeFile newpath
+
+    try:
+      moveFile("." / pbgo, fullpath / pbgo)
+    except OSError:
+      echo getCurrentExceptionMsg()
+      return false
+    true
+
 when isMainModule:
   proc main =
     when not defined(release):
@@ -314,6 +335,10 @@ when isMainModule:
       var pb: Proto
       if pbfile != "":
         pb = pbfile.parsePb
+        if pb.messages.len <= 0 or pb.services.len < 1:
+          quit "Whether invalid protobuf or no messages or services available"
+        if not compileProtoc(pbfile, info):
+          quit QuitFailure
         pb.writeUsecaseWith(info, tbls)
         pb.writeViewmodelWith info
         pb.writeServiceWith info

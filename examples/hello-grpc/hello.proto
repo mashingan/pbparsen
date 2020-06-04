@@ -1,5 +1,7 @@
 syntax="proto3";
+package hello;
 
+option go_package = ".;hello_grpc";
 
 service Hello {
     rpc HelloWorld(EmptyMessage) returns (String);

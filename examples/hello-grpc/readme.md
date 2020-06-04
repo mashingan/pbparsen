@@ -9,18 +9,17 @@ After we've built the `pbparsen`
 
 ```
 $ ../../pbparsen config.cfg
-$ cd src/hello_grpc/hello_grpc_service
-$ mkdir -p pb pb/hello_grpc
-$ cp ../../../hello.pb.go pb/hello_grpc/
-$ cd ../
+$ cd src/hello_grpc/
 $ go mod init hello_grpc
 $ go vet server_driver.go
 ```
 
 This will install and fix all dependencies. Here we can check whether the
 all is OK.  
+Make sure that we have `protoc` installed and availabe in path. Please refer to `protoc`
+installation in [gRPC Golang tutorial](https://grpc.io/docs/languages/go/quickstart/).
 
-If there's no problem. We can run it
+If there's no problem. We can run it using our implemented `client.go`
 
 ```
 $ go run server_driver.go &
@@ -32,6 +31,8 @@ Unexpected error rpc error: code = Unknown desc = No implemented
 
 It will return the error message that our service is running but the handlers
 are still not implemented.  
+The `client.go` here is just an example of how to access the service  
+and can be implemented differently than the provided example `client.go`.  
 We can implement it by ourselve but let's copy the implemented handlers.
 
 ```
