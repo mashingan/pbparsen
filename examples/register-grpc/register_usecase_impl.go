@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"sync"
 
-	register "github.com/mashingan/register/register_service"
-	"github.com/mashingan/register/register_service/entity"
-	"github.com/mashingan/register/register_service/repository"
-	vm "github.com/mashingan/register/register_service/view_model"
+	register "register/register_service"
+	"register/register_service/entity"
+	"register/register_service/repository"
+	vm "register/register_service/view_model"
 	/*
 		"github.com/jinzhu/gorm"
 		_ "github.com/jinzhu/gorm/dialects/sqlite"

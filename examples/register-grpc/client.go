@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	pb "github.com/mashingan/register/register_service/pb/register"
+	pb "register/register_service/pb/register"
 )
 
 func main() {
