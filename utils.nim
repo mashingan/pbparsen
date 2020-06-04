@@ -170,9 +170,9 @@ proc getConfigCmd*(): (GrpcServiceInfo, string, string) =
   var
     fname = getConfigFilename()
     config = loadConfig fname
-    gopath = absolutePath(config -> ("project", "gopath"))
+    gopath = config -> ("project", "gopath")
 
-  while gopath == "":
+  if gopath == "":
     let goenv = getEnv("GOPATH")
     if goenv != "": gopath = goenv
     else: gopath = getHomeDir() / "go"

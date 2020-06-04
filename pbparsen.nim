@@ -1,6 +1,6 @@
 import strutils, streams, strformat, tables, sequtils, os
 
-when NimMinor >= 19:
+when NimMinor >= 19 or NimMajor >= 1:
   import sugar
 else:
   import future
@@ -206,9 +206,7 @@ proc proto(exprs: varargs[Expr]): Proto =
       of OneOf:
         # to be added later
         discard
-      else:
-        discard
-    else:
+    of End:
       discard
   result.services = services
   result.messages = messages
@@ -268,9 +266,12 @@ when isMainModule:
         quit "Please provide protobuf file"
 
       var pb = paramStr(1).parsePb
-      echo pb
+      dump pb
+      if pb.services.len < 1:
+        quit "Invalid protobuf file provided"
 
       let gopath = "GOPATH".getenv((getHomeDir() / "go").unixSep)
+      dump gopath
       let info = GrpcServiceInfo(
         name: "payment",
         basepath: "paxelit/payment",
