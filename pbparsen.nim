@@ -10,10 +10,6 @@ import sqlgen
 import types, utils
 export types, utils
 
-import goout/[gousecase, goviewmodel, goservice, gomodel, govars,
-              goendpoints, gotransport, gorepository, goserverdriver,
-              goconfig, gousecase_impl]
-
 proc isComment(s: Stream): (bool, bool) =
   try:
     let comment = s.peekStr 2
@@ -256,31 +252,36 @@ proc parsePb*(fname: string): Proto =
 
   result.normalizeFieldType
 
-when defined(release):
-  include writingtmpl
-
-  proc compileProtoc(fname: string, info: GrpcServiceInfo): bool =
-    if execShellCmd(&"protoc --go_out=plugins=grpc:. --go_opt=paths=source_relative {fname}") != 0:
-      echo "Error happened when invoking protoc, ensure protoc installed correctly"
-      return false
-    let (_, name, _) = splitFile fname
-    let pbgo = &"{name}.pb.go"
-    info.writingPrologue(true, &"pb/{info.name}", pbpath)
-    let newpath = fullpath / pbgo
-
-    # workaround because moveFile cannot silently be overwritten on windows
-    when defined(windows):
-      if newpath.existsFile:
-        removeFile newpath
-
-    try:
-      moveFile("." / pbgo, fullpath / pbgo)
-    except OSError:
-      echo getCurrentExceptionMsg()
-      return false
-    true
-
 when isMainModule:
+
+  import goout/[gousecase, goviewmodel, goservice, gomodel, govars,
+                goendpoints, gotransport, gorepository, goserverdriver,
+                goconfig, gousecase_impl]
+
+  when defined(release):
+    include writingtmpl
+
+    proc compileProtoc(fname: string, info: GrpcServiceInfo): bool =
+      if execShellCmd(&"protoc --go_out=plugins=grpc:. --go_opt=paths=source_relative {fname}") != 0:
+        echo "Error happened when invoking protoc, ensure protoc installed correctly"
+        return false
+      let (_, name, _) = splitFile fname
+      let pbgo = &"{name}.pb.go"
+      info.writingPrologue(true, &"pb/{info.name}", pbpath)
+      let newpath = fullpath / pbgo
+
+      # workaround because moveFile cannot silently be overwritten on windows
+      when defined(windows):
+        if newpath.existsFile:
+          removeFile newpath
+
+      try:
+        moveFile("." / pbgo, fullpath / pbgo)
+      except OSError:
+        echo getCurrentExceptionMsg()
+        return false
+      true
+
   proc main =
     when not defined(release):
       if paramCount() < 1:
